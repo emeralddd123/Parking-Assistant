@@ -1,0 +1,42 @@
+LIBRARY ieee;
+USE ieee.std_logic_1164.ALL;
+ENTITY trigger_generator IS
+    PORT (
+        clk : IN STD_LOGIC;
+        trigg : OUT STD_LOGIC);
+END ENTITY;
+ARCHITECTURE behaviour OF trigger_generator IS
+    COMPONENT counter IS
+        GENERIC (n : POSITIVE := 10);
+        PORT (
+            clk : IN STD_LOGIC;
+            enable : IN STD_LOGIC;
+            reset : IN STD_LOGIC; -- active low
+            counter_output : OUT STD_LOGIC_VECTOR(n - 1 DOWNTO 0));
+    END COMPONENT;
+    SIGNAL resetCounter : STD_LOGIC;
+    SIGNAL outputCounter : STD_LOGIC_VECTOR(23 DOWNTO 0);
+BEGIN
+    trigger_gen : counter GENERIC MAP(24)
+    PORT MAP(clk, '1', resetCounter, outputCounter);
+    PROCESS (clk)
+        CONSTANT ms100 : STD_LOGIC_VECTOR(23 DOWNTO
+        0) := "010011000100101101000000";--20ns/100ms
+        --CONSTANT ms100And20us : STD_LOGIC_VECTOR(23 DOWNTO 0) := "010011000100111100100110";
+        CONSTANT ms100And20us : STD_LOGIC_VECTOR(23 DOWNTO
+        0) := "010011000100110100110011";--20ns/(100ms+20us)
+    BEGIN
+        IF (outputCounter > ms100 AND outputCounter <
+            ms100And20us) THEN
+            trigg <= '1';
+        ELSE
+            trigg <= '0';
+        END IF;
+        IF (outputCounter = ms100and20us OR
+            outputCounter = "XXXXXXXXXXXXXXXXXXXXXXXX") THEN
+            resetCounter <= '0';
+        ELSE
+            resetCounter <= '1';
+        END IF;
+    END PROCESS;
+END ARCHITECTURE;
