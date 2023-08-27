@@ -1,0 +1,8 @@
+db/
+db
+.qsys_edit
+.qsys_edit/
+output_files
+output_files/
+greybox_tmp
+greybox_tmp/

@@ -1,5 +1,5 @@
 Analysis & Synthesis report for parkingAssistant
-Sat Aug 26 23:56:12 2023
+Sun Aug 27 02:36:13 2023
 Quartus Prime Version 22.1std.1 Build 917 02/14/2023 SC Lite Edition
 
 
@@ -37,7 +37,7 @@ https://fpgasoftware.intel.com/eula.
 +-------------------------------------------------------------------------------------+
 ; Analysis & Synthesis Summary                                                        ;
 +------------------------------------+------------------------------------------------+
-; Analysis & Synthesis Status        ; Failed - Sat Aug 26 23:56:12 2023              ;
+; Analysis & Synthesis Status        ; Failed - Sun Aug 27 02:36:13 2023              ;
 ; Quartus Prime Version              ; 22.1std.1 Build 917 02/14/2023 SC Lite Edition ;
 ; Revision Name                      ; parkingAssistant                               ;
 ; Top-level Entity Name              ; parkingAssistant                               ;
@@ -164,7 +164,7 @@ https://fpgasoftware.intel.com/eula.
 Info: *******************************************************************
 Info: Running Quartus Prime Analysis & Synthesis
     Info: Version 22.1std.1 Build 917 02/14/2023 SC Lite Edition
-    Info: Processing started: Sat Aug 26 23:55:58 2023
+    Info: Processing started: Sun Aug 27 02:36:04 2023
 Info: Command: quartus_map --read_settings_files=on --write_settings_files=off parkingAssistant -c parkingAssistant
 Warning (18236): Number of processors has not been specified which may cause overloading on shared machines.  Set the global assignment NUM_PARALLEL_PROCESSORS in your QSF to an appropriate value for best performance.
 Info (20030): Parallel compilation is enabled and will use 16 of the 16 processors detected
@@ -193,8 +193,8 @@ Error (10482): VHDL error at vga_display.vhd(90): object "condition_for_red_ligh
 Error (10482): VHDL error at vga_display.vhd(66): object "out_dist" is used but not declared File: C:/Users/usman/OneDrive/Documents/GitHub/Parking-Assistant/src/vga_display.vhd Line: 66
 Error: Quartus Prime Analysis & Synthesis was unsuccessful. 2 errors, 1 warning
     Error: Peak virtual memory: 4789 megabytes
-    Error: Processing ended: Sat Aug 26 23:56:12 2023
-    Error: Elapsed time: 00:00:14
-    Error: Total CPU time (on all processors): 00:00:19
+    Error: Processing ended: Sun Aug 27 02:36:13 2023
+    Error: Elapsed time: 00:00:09
+    Error: Total CPU time (on all processors): 00:00:11
 
 
