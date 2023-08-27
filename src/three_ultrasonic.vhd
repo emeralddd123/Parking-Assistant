@@ -5,7 +5,7 @@ ENTITY three_ultrasonic IS
         clk : IN STD_LOGIC;
         pulse : IN STD_LOGIC_VECTOR(2 DOWNTO 0);
         triggerOut : OUT STD_LOGIC_VECTOR(2 DOWNTO 0);
-        rear_left, rear_center, rear_right1 : OUT INTEGER RANGE 0 TO 400);
+        rear_left, rear_center, rear_right : OUT INTEGER RANGE 0 TO 400);
 END ENTITY;
 ARCHITECTURE behaviour OF three_ultrasonic IS
     COMPONENT ultrasonic IS
@@ -27,5 +27,5 @@ BEGIN
 
     rear_left <= ultrasonic_out_rear_left;
     rear_center <= ultrasonic_out_rear_center;
-    rear_right1 <= ultrasonic_out_rear_right;
+    rear_right <= ultrasonic_out_rear_right;
 END ARCHITECTURE;

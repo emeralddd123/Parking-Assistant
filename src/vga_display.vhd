@@ -29,7 +29,6 @@ ARCHITECTURE display OF vga_display IS
     -- Signals to hold the present horizontal and vertical positions.
     SIGNAL hposition : INTEGER RANGE 0 TO 4000 := 0;
     SIGNAL vposition : INTEGER RANGE 0 TO 4000 := 0;
-    SIGNAL q : STD_LOGIC_VECTOR(23 DOWNTO 0) := (OTHERS => '0');
 
     --
     --
