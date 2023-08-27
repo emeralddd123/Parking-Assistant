@@ -43,8 +43,8 @@ BEGIN
     display_mapping : vga_display PORT MAP(clk => clk, red => red, grn => grn, blu => blu, hsync => hsync, vsync => vsync)
 
     --some logic
-    main : process( rear_left, rear_center, rear_right )
-    begin
+    -- main : process( rear_left, rear_center, rear_right )
+    -- begin
         
-    end process ; -- main
+    -- end process ; -- main
 END ARCHITECTURE helper;

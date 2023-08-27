@@ -13,6 +13,10 @@ END ENTITY vga_display;
 ARCHITECTURE display OF vga_display IS
     CONSTANT clk_freq : INTEGER := 50e6; -- The clock frequency of the DE10-Lite is 50 MHz.
 
+    -- Define the distance thresholds
+    CONSTANT DIST_THRESHOLD_RED : INTEGER := 50;
+    CONSTANT DIST_THRESHOLD_YELLOW : INTEGER := 100;
+
     -- -- Signals that will hold the parameters at any point in time for a 640x480 display
     SIGNAL hfp : INTEGER := 16; -- horizontal front porch
     SIGNAL hsp : INTEGER := 96; -- horizontal sync pulse
@@ -62,7 +66,7 @@ BEGIN
 disp_clk: work.clk25 port map( inclk0 => clk,
 												 c0	 => clk25);
 
-    output_logic : PROCESS (out_dist, hposition, vposition)
+    output_logic : PROCESS (rear_left, rear_center, rear_right, hposition, vposition)
         -- It is a great idea to use relative positions when placing things on a screen
         -- e.g. instead of saying place a red box between pixels 200 and 400, it is better
         -- to start the red box at position "max_width / 3" etc. That way, if max_width
@@ -85,29 +89,29 @@ disp_clk: work.clk25 port map( inclk0 => clk,
         VARIABLE color_rear_centre : STD_LOGIC_VECTOR(7 DOWNTO 0);
         VARIABLE color_rear_right : STD_LOGIC_VECTOR(7 DOWNTO 0);
     BEGIN
-        -- Determine the color for each rectangle based on conditions
-        IF condition_for_red_light_rear_left THEN
-            color_rear_left := red;
-        ELSIF condition_for_yellow_light_rear_left THEN
+        -- Determine the color for each rectangle based on distance from obstcles
+        IF rear_left > DIST_THRESHOLD_YELLOW THEN
+            color_rear_left := green;
+        ELSIF rear_left > DIST_THRESHOLD_RED THEN
             color_rear_left := yellow;
         ELSE
-            color_rear_left := green;
+            color_rear_left := red;
         END IF;
 
-        IF condition_for_red_light_rear_centre THEN
-            color_rear_centre := red;
-        ELSIF condition_for_yellow_light_rear_centre THEN
+        IF rear_center > DIST_THRESHOLD_YELLOW THEN
+            color_rear_centre := green;
+        ELSIF rear_center > DIST_THRESHOLD_RED THEN
             color_rear_centre := yellow;
         ELSE
-            color_rear_centre := green;
+            color_rear_centre := red;
         END IF;
 
-        IF condition_for_red_light_rear_right THEN
-            color_rear_right := red;
-        ELSIF condition_for_yellow_light_rear_right THEN
+        IF rear_right > DIST_THRESHOLD_YELLOW THEN
+            color_rear_right := green;
+        ELSIF rear_right > DIST_THRESHOLD_RED THEN
             color_rear_right := yellow;
         ELSE
-            color_rear_right := green;
+            color_rear_right := red;
         END IF;
 
         -- Using the generate_rectangle function with different colors
@@ -115,8 +119,8 @@ disp_clk: work.clk25 port map( inclk0 => clk,
         vga <= vga OR generate_rectangle(h_rear_centre, v_rear, light_width, light_height, color_rear_centre);
         vga <= vga OR generate_rectangle(h_rear_right, v_rear, light_width, light_height, color_rear_right);
 
-        -- More code for other elements and logic as needed
-    END PROCESS; -- output_logic
+
+        END PROCESS; -- output_logic
     --
     --
     --
