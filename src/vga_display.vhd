@@ -14,8 +14,6 @@ END ENTITY vga_display;
 ARCHITECTURE display OF vga_display IS
     CONSTANT clk_freq : INTEGER := 50e6; -- The clock frequency of the DE10-Lite is 50 MHz.
 
-    
-
     -- -- Signals that will hold the parameters at any point in time for a 640x480 display
     SIGNAL hfp : INTEGER := 16; -- horizontal front porch
     SIGNAL hsp : INTEGER := 96; -- horizontal sync pulse
@@ -33,63 +31,105 @@ ARCHITECTURE display OF vga_display IS
     SIGNAL hposition : INTEGER RANGE 0 TO 4000 := 0;
     SIGNAL vposition : INTEGER RANGE 0 TO 4000 := 0;
 
-    
-
     --signal for the distances
     --SIGNAL rear_left, rear_center, rear_right : INTEGER RANGE 0 TO 400;
-
-    VARIABLE hoffset : INTEGER := hfp + hsp + hbp;
-    VARIABLE voffset : INTEGER := vfp + vsp + vbp;
-
-    VARIABLE h1quarter : INTEGER := hoffset + hva / 4;
-    VARIABLE hcentre : INTEGER := hoffset + hva / 2;
-    VARIABLE h3quarters : INTEGER := hoffset + 3 * hva / 4;
-    VARIABLE v1quarter : INTEGER := voffset + vva / 4;
-    VARIABLE vcentre : INTEGER := voffset + vva / 2;
-    VARIABLE v3quarters : INTEGER := voffset + 3 * vva / 4;
-
-    VARIABLE h_light_centre1 : INTEGER := hoffset + (hva / 4);
-    VARIABLE h_light_centre2 : INTEGER := hoffset + 3 * (hva / 4);
-    VARIABLE light_width : INTEGER := (hva / 10);
-    VARIABLE light_height : INTEGER := vva/10;
-
-
-    
-    FUNCTION generate_rectangle(h_pos : INTEGER; v_pos : INTEGER;
-        width : INTEGER;
-        height : INTEGER;
-        color : STD_LOGIC_VECTOR(23 DOWNTO 0);
-        hva : INTEGER)
-        RETURN STD_LOGIC_VECTOR IS
-        VARIABLE vga_signal : STD_LOGIC_VECTOR((hva - 1) DOWNTO 0);
-        VARIABLE x, y : INTEGER;
-        VARIABLE color_vector : STD_LOGIC_VECTOR(23 DOWNTO 0); -- 24-bit color representation
-    BEGIN
-        vga_signal := (OTHERS => '0'); -- Initialize VGA signal
-
-        -- Convert the integer color value to a 24-bit std_logic_vector
-        color_vector := color;
-
-        FOR y IN v_pos TO v_pos + height - 1 LOOP
-            FOR x IN h_pos TO h_pos + width - 1 LOOP
-                vga_signal(x * color_vector'LENGTH + color_vector'LENGTH - 1 DOWNTO x * color_vector'LENGTH) := color_vector; -- Set pixel color
-            END LOOP;
-        END LOOP;
-
-        RETURN vga_signal;
-    END FUNCTION;
 BEGIN
     disp_clk : work.clk25 PORT MAP(inclk0 => clk,
     c0 => clk25);
 
-    
-    --
-    --
-    --
+    output_logic : PROCESS (rear_left, rear_center, rear_right, hposition, vposition)
+        VARIABLE hoffset : INTEGER := hfp + hsp + hbp;
+        VARIABLE voffset : INTEGER := vfp + vsp + vbp;
+
+        VARIABLE h1quarter : INTEGER := hoffset + hva / 4;
+        VARIABLE hcentre : INTEGER := hoffset + hva / 2;
+        VARIABLE h3quarters : INTEGER := hoffset + 3 * hva / 4;
+        VARIABLE v1quarter : INTEGER := voffset + vva / 4;
+        VARIABLE vcentre : INTEGER := voffset + vva / 2;
+        VARIABLE v3quarters : INTEGER := voffset + 3 * vva / 4;
+
+        VARIABLE light_width : INTEGER := (hva / 15);
+        VARIABLE light_height : INTEGER := vva/15;
+        VARIABLE h_light_centre1 : INTEGER := hoffset + (hva / 4) - light_width;
+        VARIABLE h_light_centre2 : INTEGER := hoffset + 2 * (hva / 4) - light_width;
+        VARIABLE h_light_centre3 : INTEGER := hoffset + 4 * (hva / 4) - light_width;
+
+        VARIABLE v_light_centre : INTEGER := voffset + (vva/4); --the light are gonna maintain same y-axis
+
+        VARIABLE h_square1_start : INTEGER := h_light_centre1 - light_width
+        VARIABLE h_square2_start : INTEGER := h_light_centre2 - light_width
+        VARIABLE h_square3_start : INTEGER := h_light_centre3 - light_width
+
+        VARIABLE h_square1_stop : INTEGER := h_light_centre1 + light_width
+        VARIABLE h_square2_stop : INTEGER := h_light_centre2 + light_width
+        VARIABLE h_square3_stop : INTEGER := h_light_centre3 + light_width
+
+        VARIABLE v_square_start : INTEGER := v_light_centre - light_height
+        VARIABLE v_square_stop : INTEGER := v_light_centre + light_height
+        -- Define the distance thresholds
+        CONSTANT DIST_THRESHOLD_RED : INTEGER := 50;
+        CONSTANT DIST_THRESHOLD_COLOUR_YELLOW : INTEGER := 100;
+
+    BEGIN
+        IF ((rear_left > DIST_THRESHOLD_COLOUR_YELLOW) AND (hposition >= h_square1_start) AND (hposition < h_square1_stop) AND (vposition >= v_square_start) AND (vposition >= v_square_stop)) THEN
+            red <= x"1";
+            grn <= x"f";
+            blu <= x"1";
+        ELSIF ((rear_left > DIST_THRESHOLD_RED) AND (hposition >= h_square1_start) AND (hposition < h_square1_stop) AND (vposition >= v_square_start) AND (vposition >= v_square_stop)) THEN
+            red <= x"f";
+            grn <= x"f";
+            blu <= x"1";
+        ELSIF ((rear_left < DIST_THRESHOLD_RED) AND (hposition >= h_square1_start) AND (hposition < h_square1_stop) AND (vposition >= v_square_start) AND (vposition >= v_square_stop)) THEN
+            red <= x"f";
+            grn <= x"1";
+            blu <= x"1";
+        ELSE
+            red <= x"1";
+            grn <= x"1";
+            blu <= x"1";
+        END IF;
+
+        IF ((rear_center > DIST_THRESHOLD_COLOUR_YELLOW) AND (hposition >= h_square2_start) AND (hposition < h_square2_stop) AND (vposition >= v_square_start) AND (vposition >= v_square_stop)) THEN
+            red <= x"1";
+            grn <= x"f";
+            blu <= x"1";
+        ELSIF ((rear_center > DIST_THRESHOLD_RED) AND (hposition >= h_square2_start) AND (hposition < h_square2_stop) AND (vposition >= v_square_start) AND (vposition >= v_square_stop)) THEN
+            red <= x"f";
+            grn <= x"f";
+            blu <= x"1";
+        ELSIF ((rear_center < DIST_THRESHOLD_RED) AND (hposition >= h_square2_start) AND (hposition < h_square2_stop) AND (vposition >= v_square_start) AND (vposition >= v_square_stop)) THEN
+            red <= x"f";
+            grn <= x"1";
+            blu <= x"1";
+        ELSE
+            red <= x"1";
+            grn <= x"1";
+            blu <= x"1";
+        END IF;
+
+        IF ((rear_right > DIST_THRESHOLD_COLOUR_YELLOW) AND (hposition >= h_square3_start) AND (hposition < h_square3_stop) AND (vposition >= v_square_start) AND (vposition >= v_square_stop)) THEN
+            red <= x"1";
+            grn <= x"f";
+            blu <= x"1";
+        ELSIF ((rear_right > DIST_THRESHOLD_RED) AND (hposition >= h_square3_start) AND (hposition < h_square3_stop) AND (vposition >= v_square_start) AND (vposition >= v_square_stop)) THEN
+            red <= x"f";
+            grn <= x"f";
+            blu <= x"1";
+        ELSIF ((rear_right < DIST_THRESHOLD_RED) AND (hposition >= h_square3_start) AND (hposition < h_square3_stop) AND (vposition >= v_square_start) AND (vposition >= v_square_stop)) THEN
+            red <= x"f";
+            grn <= x"1";
+            blu <= x"1";
+        ELSE
+            red <= x"1";
+            grn <= x"1";
+            blu <= x"1";
+        END IF;
+
+    END PROCESS;
+
     display_things : PROCESS (clk25)
     BEGIN
         -- When horizontal position counter gets to the last pixel in a row, go back
-        -- to zero and increment the vertical counter (i.e. go to start of next line)
         -- else increase hposition by 1
         IF rising_edge(clk25) THEN
             IF hposition >= (hfp + hsp + hbp + hva) THEN
