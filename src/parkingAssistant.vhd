@@ -33,8 +33,33 @@ ARCHITECTURE helper OF parkingAssistant IS
         );
     END COMPONENT;
 
+    --distance from obstacle distance
+    SIGNAL rear_left, rear_center, rear_right : INTEGER RANGE 0 TO 400;
+
 BEGIN
 
+    -- Instantiate three_ultrasonic component
+    ultrasonic_inst : three_ultrasonic
+    PORT MAP (
+        clk => clk,
+        pulse => pulse,
+        triggerOut => triggerOut,
+        rear_left => rear_left,
+        rear_center => rear_center,
+        rear_right => rear_right
+    );
+
+
+    -- Instantiate vga_display component
+    vga_inst : vga_display
+    PORT MAP (
+        clk => clk,
+        red => red,
+        grn => grn,
+        blu => blu,
+        hsync => hsync,
+        vsync => vsync
+    );
 
 
 

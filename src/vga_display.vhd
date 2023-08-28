@@ -56,16 +56,16 @@ BEGIN
 
         VARIABLE v_light_centre : INTEGER := voffset + (vva/4); --the light are gonna maintain same y-axis
 
-        VARIABLE h_square1_start : INTEGER := h_light_centre1 - light_width
-        VARIABLE h_square2_start : INTEGER := h_light_centre2 - light_width
-        VARIABLE h_square3_start : INTEGER := h_light_centre3 - light_width
+        VARIABLE h_square1_start : INTEGER := h_light_centre1 - light_width;
+        VARIABLE h_square2_start : INTEGER := h_light_centre2 - light_width;
+        VARIABLE h_square3_start : INTEGER := h_light_centre3 - light_width;
 
-        VARIABLE h_square1_stop : INTEGER := h_light_centre1 + light_width
-        VARIABLE h_square2_stop : INTEGER := h_light_centre2 + light_width
-        VARIABLE h_square3_stop : INTEGER := h_light_centre3 + light_width
+        VARIABLE h_square1_stop : INTEGER := h_light_centre1 + light_width;
+        VARIABLE h_square2_stop : INTEGER := h_light_centre2 + light_width;
+        VARIABLE h_square3_stop : INTEGER := h_light_centre3 + light_width;
 
-        VARIABLE v_square_start : INTEGER := v_light_centre - light_height
-        VARIABLE v_square_stop : INTEGER := v_light_centre + light_height
+        VARIABLE v_square_start : INTEGER := v_light_centre - light_height;
+        VARIABLE v_square_stop : INTEGER := v_light_centre + light_height;
         -- Define the distance thresholds
         CONSTANT DIST_THRESHOLD_RED : INTEGER := 50;
         CONSTANT DIST_THRESHOLD_COLOUR_YELLOW : INTEGER := 100;
